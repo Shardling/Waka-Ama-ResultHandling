@@ -1,10 +1,8 @@
-#importing modules
 import os
-
 #function for finding files with keywords and storing them in a list
 def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> list:
-    #looks for the path]
-    global folder_name
+    #looks for the path
+    global folder_name, selected_files, file_name
     absolute_folder_path = os.path.abspath(folder_path)
     #the list(s)
     selected_files = []
@@ -31,16 +29,32 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
 folder_path = "/Users/mtvpo/Downloads/3.7B resource files"
 keyword = "Final" 
 keyword_2 = "2017"
+as_name = []
+t_score = []
+count = 0
 
 #Tells the user if their folders have the necessary files in them, this is subject to change
-selected_files = Select_files_with_finals(folder_path, keyword, keyword_2)
-if selected_files: 
-    for file_path in selected_files: 
+selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
+if selected_file: 
+    #for every valid file path in selected files
+    for file_path in selected_files:
+        #opent the file path as a file
         with open(file_path, 'r') as file: 
-            file_content = file.read() 
-            print(f"File: '{file_path}':") 
+            #loop that reads line by line
+            while True:
+                file_content = file.readline()
+                #skips the first line
+                if count != 0:
+                    step = file_content.split(",")
+                    print(step[0])
+                else:
+                    #first line skipped
+                    count += 1
+                #if there are no more lines to read
+                if not file_content:
+                    #reset count so next file the first line can be skipped
+                    count = 0
+                    #bake
+                    break
 else: 
     print(f"No files with the keyword '{keyword}' found in the folder.") 
-
-pain = len(selected_files)
-print(pain)
