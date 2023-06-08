@@ -38,15 +38,39 @@ selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
 if selected_file: 
     #for every valid file path in selected files
     for file_path in selected_files:
-        #opent the file path as a file
+        #open the file path as a file
         with open(file_path, 'r') as file: 
             #loop that reads line by line
             while True:
                 file_content = file.readline()
                 #skips the first line
                 if count != 0:
+                    #if there are no more lines to read
+                    if not file_content:
+                        #reset count so next file the first line can be skipped
+                        count = 0
+                        #bake
+                        break
+                    #splits line onto a list
                     step = file_content.split(",")
-                    print(step[0])
+                    #error handling, if it isnt an integer, it will spit an arror out
+                    try:
+                        if int(step[0]) < 8:
+                            f_score = 9 - int(step[0])
+                        else:
+                            f_score = 1
+                    except:
+                        f_score = 0
+                    #if the 6th column's item does not already exist
+                    if step[5] not in as_name:
+                        #appends to list
+                        as_name.append(step[5])
+                        t_score.append(f_score)
+                    #if the 6th column's item is already present within the list
+                    else:
+                        #get position of the item within list and then add new score to place in list that holds scores
+                        a = as_name.index(step[5])
+                        t_score[a] = t_score[a] + f_score
                 else:
                     #first line skipped
                     count += 1
@@ -57,4 +81,10 @@ if selected_file:
                     #bake
                     break
 else: 
-    print(f"No files with the keyword '{keyword}' found in the folder.") 
+    print(f"No files with the keyword '{keyword}' found in the folder.")
+
+t_score, as_name = zip(*sorted(zip(t_score, as_name)))
+brain = len(as_name)
+while brain > 0:
+    brain -= 1
+    print(as_name[brain], t_score[brain])
