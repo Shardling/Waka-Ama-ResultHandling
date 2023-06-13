@@ -1,4 +1,5 @@
 import os
+import csv
 #function for finding files with keywords and storing them in a list
 def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> list:
     #looks for the path
@@ -9,8 +10,8 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
     other_files = []
     #parses through each file name and checks if keyword is in it.
     for root, dirs, files in os.walk(absolute_folder_path): 
-        for file_name in files: 
-            if keyword in file_name: 
+        for file_name in files:
+            if keyword in file_name:
                 file_path = os.path.join(root, file_name)
                 #from those files, check if the folder they are in have keyword_2 
                 folder_name = os.path.dirname(file_path)
@@ -26,13 +27,12 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
     #so I can use this outside of the function
     return selected_files, other_files
 #These are where the folder path and keywords are located
-folder_path = "/Users/mtvpo/Downloads/3.7B resource files"
+folder_path = "C:/Users/mtvpo/Code/.vscode/3.7B resource files"
 keyword = "Final" 
 keyword_2 = "2017"
 as_name = []
 t_score = []
 count = 0
-
 #Tells the user if their folders have the necessary files in them, this is subject to change
 selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
 if selected_file: 
@@ -40,6 +40,7 @@ if selected_file:
     for file_path in selected_files:
         #open the file path as a file
         with open(file_path, 'r') as file: 
+            print("File being read:   ", file_path)
             #loop that reads line by line
             while True:
                 file_content = file.readline()
@@ -82,9 +83,18 @@ if selected_file:
                     break
 else: 
     print(f"No files with the keyword '{keyword}' found in the folder.")
-
-t_score, as_name = zip(*sorted(zip(t_score, as_name)))
-brain = len(as_name)
-while brain > 0:
-    brain -= 1
-    print(as_name[brain], t_score[brain])
+#sorts both lists at the same time
+t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
+def csv_file():
+    encodings = ["utf-16"]
+    for encoding in encodings:
+        #puts lists into a csv file
+        try:
+            with open("results.csv", "w", newline="", encoding=encoding) as file:
+                writer = csv.writer(file)
+                writer.writerow(["Association Name", "Total Score"])
+                for i in range(len(as_name)):
+                    writer.writerow([as_name[i], t_score[i]])
+        except OSError:
+            continue
+csv_file()
