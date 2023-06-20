@@ -1,5 +1,48 @@
 import os
 import csv
+from tkinter import *
+from tkinter import ttk
+import time
+win = Tk()
+win.geometry("700x350")
+win.overrideredirect(True)
+win.config(bg='gray10')
+def start_move(event):
+    win.x = event.x
+    win.y = event.y
+
+def stop_move():
+    win.x = None
+    win.y = None
+
+def do_move(event):
+    deltax = event.x - win.x
+    deltay = event.y - win.y
+    x = win.winfo_x() + deltax
+    y = win.winfo_y() + deltay
+    win.geometry(f"+{x}+{y}")
+def quitt(e):
+    win.destroy()
+
+#create a new title bar
+title_bar = Frame(win, bg='gray4', relief="raised", bd=0)
+title_bar.pack(expand=0, fill=X)
+#if click on title bar, move with mouse
+title_bar.bind("<ButtonPress-1>", start_move)
+title_bar.bind("<ButtonRelease-1>", stop_move)
+title_bar.bind("<B1-Motion>", do_move)
+#simulate normal title
+title_label = Label(title_bar, text='Waka-Ama Results',bg='gray4', fg='white')
+title_label.pack(side=LEFT, pady= 4, padx= 4)
+title_label.bind("<ButtonPress-1>", start_move)
+title_label.bind("<ButtonRelease-1>", stop_move)
+title_label.bind("<B1-Motion>", do_move)
+#THE, the X button
+close_label = Label(title_bar, text='  X  ',bg='gray4', fg='red', relief='sunken', bd=1)
+close_label.pack(side=RIGHT, pady=4)
+close_label.bind('<Button-1>', quitt)
+
+win.update()
 #function for finding files with keywords and storing them in a list
 def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> list:
     #looks for the path
@@ -35,12 +78,21 @@ t_score = []
 count = 0
 #Tells the user if their folders have the necessary files in them, this is subject to change
 selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
-if selected_file: 
+if selected_file:
+    #progress bar
+    win.config(bg='gray10')
+    progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
+    progress_bar.pack(pady=20)
     #for every valid file path in selected files
     for file_path in selected_files:
+        #showing file being read
+        file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
+        file_show.pack()
+        progress_bar['value'] += 100/len(selected_files)
+        win.update_idletasks()
+        time.sleep(0.01)
         #open the file path as a file
         with open(file_path, 'r') as file: 
-            print("File being read:   ", file_path)
             #loop that reads line by line
             while True:
                 file_content = file.readline()
@@ -81,6 +133,9 @@ if selected_file:
                     count = 0
                     #bake
                     break
+        file_show.destroy()
+        win.update()
+    progress_bar.destroy()
 else: 
     print(f"No files with the keyword '{keyword}' found in the folder.")
 #sorts both lists at the same time
@@ -98,3 +153,6 @@ def csv_file():
         except OSError:
             continue
 csv_file()
+
+
+win.mainloop()
