@@ -1,20 +1,27 @@
+#imports
 import os
 import csv
 from tkinter import *
 from tkinter import ttk
 import time
+#create a new window
 win = Tk()
 win.geometry("700x350")
+#no toolbar
 win.overrideredirect(True)
 win.config(bg='gray10')
+
+#when click starts or is moving window pos = mouse pos
 def start_move(event):
     win.x = event.x
     win.y = event.y
 
+#when click stops, however this creates an error but does not make the code stop running
 def stop_move():
     win.x = None
     win.y = None
 
+#move window
 def do_move(event):
     deltax = event.x - win.x
     deltay = event.y - win.y
@@ -23,10 +30,9 @@ def do_move(event):
     win.geometry(f"+{x}+{y}")
 def quitt(e):
     win.destroy()
-
 #create a new title bar
 title_bar = Frame(win, bg='gray4', relief="raised", bd=0)
-title_bar.pack(expand=0, fill=X)
+title_bar.pack(expand=0, fill=X, side= TOP)
 #if click on title bar, move with mouse
 title_bar.bind("<ButtonPress-1>", start_move)
 title_bar.bind("<ButtonRelease-1>", stop_move)
@@ -75,84 +81,95 @@ keyword = "Final"
 keyword_2 = "2017"
 as_name = []
 t_score = []
-count = 0
-#Tells the user if their folders have the necessary files in them, this is subject to change
-selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
-if selected_file:
-    #progress bar
-    win.config(bg='gray10')
-    progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
-    progress_bar.pack(pady=20)
-    #for every valid file path in selected files
-    for file_path in selected_files:
-        #showing file being read
-        file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
-        file_show.pack()
-        progress_bar['value'] += 100/len(selected_files)
-        win.update_idletasks()
-        time.sleep(0.01)
-        #open the file path as a file
-        with open(file_path, 'r') as file: 
-            #loop that reads line by line
-            while True:
-                file_content = file.readline()
-                #skips the first line
-                if count != 0:
+
+#GUI part 2
+prompt = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
+prompt.pack()
+def read_files():
+    count = 0
+    #Tells the user if their folders have the necessary files in them, this is subject to change
+    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
+    if selected_file:
+        #progress bar
+        win.config(bg='gray10')
+        progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
+        progress_bar.pack(pady=20)
+        #for every valid file path in selected files
+        for file_path in selected_files:
+            #showing file being read
+            file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
+            file_show.pack()
+            progress_bar['value'] += 100/len(selected_files)
+            win.update_idletasks()
+            time.sleep(0.001)
+            #open the file path as a file
+            with open(file_path, 'r') as file: 
+                #loop that reads line by line
+                while True:
+                    file_content = file.readline()
+                    #skips the first line
+                    if count != 0:
+                        #if there are no more lines to read
+                        if not file_content:
+                            #reset count so next file the first line can be skipped
+                            count = 0
+                            #bake
+                            break
+                        #splits line onto a list
+                        step = file_content.split(",")
+                        #error handling, if it isnt an integer, it will spit an arror out
+                        try:
+                            if int(step[0]) < 8:
+                                f_score = 9 - int(step[0])
+                            else:
+                                f_score = 1
+                        except:
+                            f_score = 0
+                        #if the 6th column's item does not already exist
+                        if step[5] not in as_name:
+                            #appends to list
+                            as_name.append(step[5])
+                            t_score.append(f_score)
+                        #if the 6th column's item is already present within the list
+                        else:
+                            #get position of the item within list and then add new score to place in list that holds scores
+                            a = as_name.index(step[5])
+                            t_score[a] = t_score[a] + f_score
+                    else:
+                        #first line skipped
+                        count += 1
                     #if there are no more lines to read
                     if not file_content:
                         #reset count so next file the first line can be skipped
                         count = 0
                         #bake
                         break
-                    #splits line onto a list
-                    step = file_content.split(",")
-                    #error handling, if it isnt an integer, it will spit an arror out
-                    try:
-                        if int(step[0]) < 8:
-                            f_score = 9 - int(step[0])
-                        else:
-                            f_score = 1
-                    except:
-                        f_score = 0
-                    #if the 6th column's item does not already exist
-                    if step[5] not in as_name:
-                        #appends to list
-                        as_name.append(step[5])
-                        t_score.append(f_score)
-                    #if the 6th column's item is already present within the list
-                    else:
-                        #get position of the item within list and then add new score to place in list that holds scores
-                        a = as_name.index(step[5])
-                        t_score[a] = t_score[a] + f_score
-                else:
-                    #first line skipped
-                    count += 1
-                #if there are no more lines to read
-                if not file_content:
-                    #reset count so next file the first line can be skipped
-                    count = 0
-                    #bake
-                    break
-        file_show.destroy()
-        win.update()
-    progress_bar.destroy()
-else: 
-    print(f"No files with the keyword '{keyword}' found in the folder.")
-#sorts both lists at the same time
-t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
-def csv_file():
-    encodings = ["utf-16"]
-    for encoding in encodings:
-        #puts lists into a csv file
-        try:
-            with open("results.csv", "w", newline="", encoding=encoding) as file:
-                writer = csv.writer(file)
-                writer.writerow(["Association Name", "Total Score"])
-                for i in range(len(as_name)):
-                    writer.writerow([as_name[i], t_score[i]])
-        except OSError:
-            continue
-csv_file()
+            file_show.destroy()
+            win.update()
+        progress_bar.destroy()
+    else: 
+        print(f"No files with the keyword '{keyword}' found in the folder.")
+#button to starts previous code
+border = LabelFrame(win, bg='blue', bd=1, relief=FLAT)
+border.pack()
+pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
+pls_read_files.pack()
 
+#sorts both lists at the same time
+def file_time():
+    t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
+    def csv_file():
+        encodings = ["utf-16"]
+        for encoding in encodings:
+            #puts lists into a csv file
+            try:
+                with open("results.csv", "w", newline="", encoding=encoding) as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Association Name", "Total Score"])
+                    for i in range(len(as_name)):
+                        writer.writerow([as_name[i], t_score[i]])
+            except OSError:
+                continue
+    csv_file()
 
 win.mainloop()
