@@ -83,10 +83,14 @@ keyword_2_entry = Entry(win)
 def get_data():
     global keyword_2, selected_file
     keyword_2 = keyword_2_entry.get()
-    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
     keyword_test = keyword_2
+    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
     try:
         keyword_test = int(keyword_2)
+        prompt_1.destroy()
+        keyword_2_entry.destroy()
+        get_button.destroy()
+        ts_2()
     except ValueError:
         keyword_test_2 = isinstance(keyword_test, str)
         print(keyword_test_2)
@@ -101,77 +105,78 @@ get_button.pack()
 as_name = []
 t_score = []
 
-#GUI part 2
-prompt_2 = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
-prompt_2.pack()
-def read_files():
-    count = 0
-    #Tells the user if their folders have the necessary files in them, this is subject to change
-    if selected_file:
-        #progress bar
-        win.config(bg='gray10')
-        progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
-        progress_bar.pack(pady=20)
-        #for every valid file path in selected files
-        for file_path in selected_files:
-            #showing file being read
-            file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
-            file_show.pack()
-            progress_bar['value'] += 100/len(selected_files)
-            win.update_idletasks()
-            time.sleep(0.1)
-            #open the file path as a file
-            with open(file_path, 'r') as file: 
-                #loop that reads line by line
-                while True:
-                    file_content = file.readline()
-                    #skips the first line
-                    if count != 0:
+def ts_2():
+    #GUI part 2
+    prompt_2 = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
+    prompt_2.pack()
+    def read_files():
+        count = 0
+        #Tells the user if their folders have the necessary files in them, this is subject to change
+        if selected_file:
+            #progress bar
+            win.config(bg='gray10')
+            progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
+            progress_bar.pack(pady=20)
+            #for every valid file path in selected files
+            for file_path in selected_files:
+                #showing file being read
+                file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
+                file_show.pack()
+                progress_bar['value'] += 100/len(selected_files)
+                win.update_idletasks()
+                time.sleep(0.001)
+                #open the file path as a file
+                with open(file_path, 'r') as file: 
+                    #loop that reads line by line
+                    while True:
+                        file_content = file.readline()
+                        #skips the first line
+                        if count != 0:
+                            #if there are no more lines to read
+                            if not file_content:
+                                #reset count so next file the first line can be skipped
+                                count = 0
+                                #bake
+                                break
+                            #splits line onto a list
+                            step = file_content.split(",")
+                            #error handling, if it isnt an integer, it will spit an arror out
+                            try:
+                                if int(step[0]) < 8:
+                                    f_score = 9 - int(step[0])
+                                else:
+                                    f_score = 1
+                            except:
+                                f_score = 0
+                            #if the 6th column's item does not already exist
+                            if step[5] not in as_name:
+                                #appends to list
+                                as_name.append(step[5])
+                                t_score.append(f_score)
+                            #if the 6th column's item is already present within the list
+                            else:
+                                #get position of the item within list and then add new score to place in list that holds scores
+                                a = as_name.index(step[5])
+                                t_score[a] = t_score[a] + f_score
+                        else:
+                            #first line skipped
+                            count += 1
                         #if there are no more lines to read
                         if not file_content:
                             #reset count so next file the first line can be skipped
                             count = 0
                             #bake
                             break
-                        #splits line onto a list
-                        step = file_content.split(",")
-                        #error handling, if it isnt an integer, it will spit an arror out
-                        try:
-                            if int(step[0]) < 8:
-                                f_score = 9 - int(step[0])
-                            else:
-                                f_score = 1
-                        except:
-                            f_score = 0
-                        #if the 6th column's item does not already exist
-                        if step[5] not in as_name:
-                            #appends to list
-                            as_name.append(step[5])
-                            t_score.append(f_score)
-                        #if the 6th column's item is already present within the list
-                        else:
-                            #get position of the item within list and then add new score to place in list that holds scores
-                            a = as_name.index(step[5])
-                            t_score[a] = t_score[a] + f_score
-                    else:
-                        #first line skipped
-                        count += 1
-                    #if there are no more lines to read
-                    if not file_content:
-                        #reset count so next file the first line can be skipped
-                        count = 0
-                        #bake
-                        break
-            file_show.destroy()
-            win.update()
-        progress_bar.destroy()
-    else: 
-        print(f"No files with the keyword '{keyword}' found in the folder.")
-#button to starts previous code
-border = LabelFrame(win, bg='blue', bd=1, relief=FLAT)
-border.pack()
-pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt_2.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
-pls_read_files.pack()
+                file_show.destroy()
+                win.update()
+            progress_bar.destroy()
+        else: 
+            print(f"No files with the keyword '{keyword}' found in the folder.")
+    #button to starts previous code
+    border = LabelFrame(win, bg='blue', bd=1, relief=FLAT)
+    border.pack()
+    pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt_2.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
+    pls_read_files.pack()
 
 #sorts both lists at the same time
 def file_time():
