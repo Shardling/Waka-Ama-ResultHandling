@@ -52,6 +52,7 @@ win.update()
 #function for finding files with keywords and storing them in a list
 def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> list:
     #looks for the path
+    global folder_name
     global folder_name, selected_files, file_name
     absolute_folder_path = os.path.abspath(folder_path)
     #the list(s)
@@ -69,26 +70,37 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
                     if keyword_2 in folder_name:
                         if os.path.isfile(file_path):
                             selected_files.append(file_path)
-                    #else append to other_files list
+                    #else open window saying something is wrong
                     else:
-                        if os.path.isfile(file_path):
-                            other_files.append(file_path)
+                        break
     #so I can use this outside of the function
     return selected_files, other_files
 #These are where the folder path and keywords are located
 folder_path = "C:/Users/mtvpo/Code/.vscode/3.7B resource files"
-keyword = "Final" 
-keyword_2 = "2017"
+keyword = "Final"
+prompt_1 = Label(win, text="Enter The Year You Want the Data From:")
+keyword_2_entry = Entry(win)
+def get_data():
+    global keyword_2, selected_file
+    keyword_2 = keyword_2_entry.get()
+    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
+    if keyword_2 not in folder_name:
+        error = Tk()
+        error_label = Label(error, text='Invalid Year or Year Not in Files. Please Try Again')
+        error_label.pack()
+get_button = Button(win, command=get_data)
+prompt_1.pack()
+keyword_2_entry.pack()
+get_button.pack()
 as_name = []
 t_score = []
 
 #GUI part 2
-prompt = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
-prompt.pack()
+prompt_2 = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
+prompt_2.pack()
 def read_files():
     count = 0
     #Tells the user if their folders have the necessary files in them, this is subject to change
-    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
     if selected_file:
         #progress bar
         win.config(bg='gray10')
@@ -101,7 +113,7 @@ def read_files():
             file_show.pack()
             progress_bar['value'] += 100/len(selected_files)
             win.update_idletasks()
-            time.sleep(0.001)
+            time.sleep(0.1)
             #open the file path as a file
             with open(file_path, 'r') as file: 
                 #loop that reads line by line
@@ -152,7 +164,7 @@ def read_files():
 #button to starts previous code
 border = LabelFrame(win, bg='blue', bd=1, relief=FLAT)
 border.pack()
-pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
+pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt_2.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
 pls_read_files.pack()
 
 #sorts both lists at the same time
