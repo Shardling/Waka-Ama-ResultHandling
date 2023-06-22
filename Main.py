@@ -84,10 +84,16 @@ def get_data():
     global keyword_2, selected_file
     keyword_2 = keyword_2_entry.get()
     selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
-    if keyword_2 not in folder_name:
-        error = Tk()
-        error_label = Label(error, text='Invalid Year or Year Not in Files. Please Try Again')
-        error_label.pack()
+    keyword_test = keyword_2
+    try:
+        keyword_test = int(keyword_2)
+    except ValueError:
+        keyword_test_2 = isinstance(keyword_test, str)
+        print(keyword_test_2)
+        if keyword_2 not in folder_name or keyword_test_2 == True:
+            error = Tk()
+            error_label = Label(error, text='Invalid Year or Year Not in Files. Please Try Again')
+            error_label.pack()
 get_button = Button(win, command=get_data)
 prompt_1.pack()
 keyword_2_entry.pack()
