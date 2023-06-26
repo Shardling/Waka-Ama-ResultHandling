@@ -4,50 +4,43 @@ import csv
 from tkinter import *
 from tkinter import ttk
 import time
+import customtkinter as ctk
+from tkinter import filedialog
+
+class errors:
+    def __init__(error):
+        error = ctk.CTk()
+        error.geometry('200x50')
+        error.eval('tk::PlaceWindow . center')
+        error_label = ctk.CTkLabel(error, text='Invalid Entry. Please Try Again.')
+        error_label.pack(pady=5)
+        error.mainloop()
+
 #create a new window
-win = Tk()
-win.geometry("700x350")
-#no toolbar
-win.overrideredirect(True)
-win.config(bg='gray10')
+win = ctk.CTk()
+win.title('Waka-Ama Results Handling')
+win.geometry("500x300")
+ctk.set_appearance_mode("Dark")
+win.eval('tk::PlaceWindow . center')
 
-#when click starts or is moving window pos = mouse pos
-def start_move(event):
-    win.x = event.x
-    win.y = event.y
 
-#when click stops, however this creates an error but does not make the code stop running
-def stop_move():
-    win.x = None
-    win.y = None
-
-#move window
-def do_move(event):
-    deltax = event.x - win.x
-    deltay = event.y - win.y
-    x = win.winfo_x() + deltax
-    y = win.winfo_y() + deltay
-    win.geometry(f"+{x}+{y}")
-def quitt(e):
-    win.destroy()
-#create a new title bar
-title_bar = Frame(win, bg='gray4', relief="raised", bd=0)
-title_bar.pack(expand=0, fill=X, side= TOP)
-#if click on title bar, move with mouse
-title_bar.bind("<ButtonPress-1>", start_move)
-title_bar.bind("<ButtonRelease-1>", stop_move)
-title_bar.bind("<B1-Motion>", do_move)
-#simulate normal title
-title_label = Label(title_bar, text='Waka-Ama Results',bg='gray4', fg='white')
-title_label.pack(side=LEFT, pady= 4, padx= 4)
-title_label.bind("<ButtonPress-1>", start_move)
-title_label.bind("<ButtonRelease-1>", stop_move)
-title_label.bind("<B1-Motion>", do_move)
-#THE, the X button
-close_label = Label(title_bar, text='  X  ',bg='gray4', fg='red', relief='sunken', bd=1)
-close_label.pack(side=RIGHT, pady=4)
-close_label.bind('<Button-1>', quitt)
-
+def end_folderselect():
+    file_entry.destroy()
+    select_button.destroy()
+    try:
+        ts_1()
+    except:
+        print("problem")
+def select_folder(entry):
+            global folder_path
+            folder_path = filedialog.askdirectory()
+            if folder_path:
+                entry.delete(0, END)
+                entry.insert(0, folder_path)
+file_entry = ctk.CTkEntry(win, width=200)
+file_entry.pack(pady=10)
+select_button = ctk.CTkButton(win, corner_radius=10, text="Select Folder", command=lambda: [select_folder(file_entry), end_folderselect()])
+select_button.pack()
 win.update()
 #function for finding files with keywords and storing them in a list
 def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> list:
@@ -76,39 +69,32 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
     #so I can use this outside of the function
     return selected_files, other_files
 #These are where the folder path and keywords are located
-folder_path = "C:/Users/mtvpo/Code/.vscode/3.7B resource files"
 keyword = "Final"
-prompt_1 = Label(win, text="Enter The Year You Want the Data From:")
-keyword_2_entry = Entry(win)
-def get_data():
-    global keyword_2, selected_file
-    keyword_2 = keyword_2_entry.get()
-    keyword_test = keyword_2
-    selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
-    try:
-        keyword_test = int(keyword_2)
-        prompt_1.destroy()
-        keyword_2_entry.destroy()
-        get_button.destroy()
-        ts_2()
-    except ValueError:
-        keyword_test_2 = isinstance(keyword_test, str)
-        print(keyword_test_2)
-        if keyword_2 not in folder_name or keyword_test_2 == True:
-            error = Tk()
-            error_label = Label(error, text='Invalid Year or Year Not in Files. Please Try Again')
-            error_label.pack()
-get_button = Button(win, command=get_data)
-prompt_1.pack()
-keyword_2_entry.pack()
-get_button.pack()
+#so i can control when this happens
+def ts_1():
+    keyword_2_entry = ctk.CTkEntry(win)
+    def get_data():
+        global keyword_2, selected_file
+        keyword_2 = keyword_2_entry.get()
+        selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
+        try:
+            print(int(keyword_2))
+            if len(selected_files) == 0:
+                use_error = errors()
+            else:
+                keyword_2_entry.destroy()
+                get_button.destroy()
+                ts_2()
+        except ValueError:
+            use_error = errors()
+    get_button = ctk.CTkButton(win, command=get_data, text='Enter Year')
+    keyword_2_entry.pack(pady=2)
+    get_button.pack(pady=2)
 as_name = []
 t_score = []
 
 def ts_2():
     #GUI part 2
-    prompt_2 = Label(text="Click Button to Read Files Present", bg='gray10', fg='white')
-    prompt_2.pack()
     def read_files():
         count = 0
         #Tells the user if their folders have the necessary files in them, this is subject to change
@@ -171,11 +157,9 @@ def ts_2():
                 win.update()
             progress_bar.destroy()
         else: 
-            print(f"No files with the keyword '{keyword}' found in the folder.")
+            print("no")
     #button to starts previous code
-    border = LabelFrame(win, bg='blue', bd=1, relief=FLAT)
-    border.pack()
-    pls_read_files = Button(border, command=lambda: [read_files(), border.destroy(), prompt_2.destroy()] , bg='gray4', height=1, width= 10, relief=FLAT)
+    pls_read_files = ctk.CTkButton(win, command=lambda: [read_files(), pls_read_files.destroy()], text='Read Files')
     pls_read_files.pack()
 
 #sorts both lists at the same time
