@@ -2,8 +2,6 @@
 import os
 import csv
 from tkinter import *
-from tkinter import ttk
-import time
 import customtkinter as ctk
 from tkinter import filedialog
 
@@ -19,7 +17,7 @@ class errors:
 #create a new window
 win = ctk.CTk()
 win.title('Waka-Ama Results Handling')
-win.geometry("500x300")
+win.geometry("550x325")
 ctk.set_appearance_mode("Dark")
 win.eval('tk::PlaceWindow . center')
 
@@ -78,7 +76,7 @@ def ts_1():
         keyword_2 = keyword_2_entry.get()
         selected_file = Select_files_with_finals(folder_path, keyword, keyword_2)
         try:
-            print(int(keyword_2))
+            key = int(keyword_2)
             if len(selected_files) == 0:
                 use_error = errors()
             else:
@@ -97,20 +95,23 @@ def ts_2():
     #GUI part 2
     def read_files():
         count = 0
+        pg_val = 1/len(selected_files)
+        pg_set = pg_val
         #Tells the user if their folders have the necessary files in them, this is subject to change
         if selected_file:
             #progress bar
             win.config(bg='gray10')
-            progress_bar = ttk.Progressbar(win, orient='horizontal', length=200, mode='determinate')
+            progress_bar = ctk.CTkProgressBar(win, mode='determinate')
+            progress_bar.set(0)
             progress_bar.pack(pady=20)
             #for every valid file path in selected files
             for file_path in selected_files:
                 #showing file being read
-                file_show = Label(text=f'File being read:   {file_path}', bg='gray10', fg='white')
+                file_show = ctk.CTkLabel(win, text=f'File being read:   {file_path}', font=('Roboto', 10))
                 file_show.pack()
-                progress_bar['value'] += 100/len(selected_files)
+                progress_bar.set(pg_set)
+                pg_set += pg_val
                 win.update_idletasks()
-                time.sleep(0.001)
                 #open the file path as a file
                 with open(file_path, 'r') as file: 
                     #loop that reads line by line
@@ -156,27 +157,30 @@ def ts_2():
                 file_show.destroy()
                 win.update()
             progress_bar.destroy()
+            file_time()
         else: 
             print("no")
     #button to starts previous code
     pls_read_files = ctk.CTkButton(win, command=lambda: [read_files(), pls_read_files.destroy()], text='Read Files')
     pls_read_files.pack()
 
-#sorts both lists at the same time
-def file_time():
-    t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
-    def csv_file():
-        encodings = ["utf-16"]
-        for encoding in encodings:
-            #puts lists into a csv file
-            try:
-                with open("results.csv", "w", newline="", encoding=encoding) as file:
-                    writer = csv.writer(file)
-                    writer.writerow(["Association Name", "Total Score"])
-                    for i in range(len(as_name)):
-                        writer.writerow([as_name[i], t_score[i]])
-            except OSError:
-                continue
-    csv_file()
+def ts_3():
+    global file_time
+    #sorts both lists at the same time
+    def file_time():
+        t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
+        def csv_file():
+            encodings = ["utf-16"]
+            for encoding in encodings:
+                #puts lists into a csv file
+                try:
+                    with open("results.csv", "w", newline="", encoding=encoding) as file:
+                        writer = csv.writer(file)
+                        writer.writerow(["Association Name", "Total Score"])
+                        for i in range(len(as_name)):
+                            writer.writerow([as_name[i], t_score[i]])
+                except OSError:
+                    continue
+        csv_file()
 
 win.mainloop()
