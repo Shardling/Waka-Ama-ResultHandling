@@ -88,9 +88,9 @@ def ts_1():
     get_button = ctk.CTkButton(win, command=get_data, text='Enter Year')
     keyword_2_entry.pack(pady=2)
     get_button.pack(pady=2)
+
 as_name = []
 t_score = []
-
 def ts_2():
     #GUI part 2
     def read_files():
@@ -157,7 +157,7 @@ def ts_2():
                 file_show.destroy()
                 win.update()
             progress_bar.destroy()
-            file_time()
+            ts_3()
         else: 
             print("no")
     #button to starts previous code
@@ -165,22 +165,22 @@ def ts_2():
     pls_read_files.pack()
 
 def ts_3():
-    global file_time
+    global t_score, as_name
     #sorts both lists at the same time
-    def file_time():
-        t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
-        def csv_file():
-            encodings = ["utf-16"]
-            for encoding in encodings:
-                #puts lists into a csv file
-                try:
-                    with open("results.csv", "w", newline="", encoding=encoding) as file:
-                        writer = csv.writer(file)
-                        writer.writerow(["Association Name", "Total Score"])
-                        for i in range(len(as_name)):
-                            writer.writerow([as_name[i], t_score[i]])
-                except OSError:
-                    continue
-        csv_file()
+    t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
+    def csv_file():
+        encodings = ["utf-16"]
+        for encoding in encodings:
+            #puts lists into a csv file
+            try:
+                with open("results.csv", "w", newline="", encoding=encoding) as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Association Name", "Total Score"])
+                    for i in range(len(as_name)):
+                        writer.writerow([as_name[i], t_score[i]])
+            except OSError:
+                continue
+    files_button = ctk.CTkButton(win, text='Sort Data And Display File', command=csv_file)
+    files_button.pack()
 
 win.mainloop()
