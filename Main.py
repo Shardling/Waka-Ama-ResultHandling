@@ -95,18 +95,21 @@ def ts_2():
     #GUI part 2
     def read_files():
         count = 0
+        count_2 = 0
         pg_val = 1/len(selected_files)
         pg_set = pg_val
         #Tells the user if their folders have the necessary files in them, this is subject to change
         if selected_file:
             #progress bar
-            win.config(bg='gray10')
             progress_bar = ctk.CTkProgressBar(win, mode='determinate')
             progress_bar.set(0)
             progress_bar.pack(pady=20)
             #for every valid file path in selected files
             for file_path in selected_files:
                 #showing file being read
+                count_2 += 1
+                file_num = ctk.CTkLabel(win, text=f'{count_2}/{len(selected_files)}')
+                file_num.pack()
                 file_show = ctk.CTkLabel(win, text=f'File being read:   {file_path}', font=('Roboto', 10))
                 file_show.pack()
                 progress_bar.set(pg_set)
@@ -135,16 +138,17 @@ def ts_2():
                                     f_score = 1
                             except:
                                 f_score = 0
-                            #if the 6th column's item does not already exist
-                            if step[5] not in as_name:
-                                #appends to list
-                                as_name.append(step[5])
-                                t_score.append(f_score)
-                            #if the 6th column's item is already present within the list
-                            else:
-                                #get position of the item within list and then add new score to place in list that holds scores
-                                a = as_name.index(step[5])
-                                t_score[a] = t_score[a] + f_score
+                            if step[5] != "":
+                                #if the 6th column's item does not already exist
+                                if step[5] not in as_name:
+                                    #appends to list
+                                    as_name.append(step[5])
+                                    t_score.append(f_score)
+                                #if the 6th column's item is already present within the list
+                                else:
+                                    #get position of the item within list and then add new score to place in list that holds scores
+                                    a = as_name.index(step[5])
+                                    t_score[a] = t_score[a] + f_score
                         else:
                             #first line skipped
                             count += 1
@@ -154,6 +158,7 @@ def ts_2():
                             count = 0
                             #bake
                             break
+                file_num.destroy()
                 file_show.destroy()
                 win.update()
             progress_bar.destroy()
@@ -164,8 +169,15 @@ def ts_2():
     pls_read_files = ctk.CTkButton(win, command=lambda: [read_files(), pls_read_files.destroy()], text='Read Files')
     pls_read_files.pack()
 
+
+def display_file():
+    display_label = ctk.CTkEntry(win, width=220)
+    display_label.insert(0, absolute_folder_path_2)
+    display_label.pack(pady=4)
+final_file = "results.csv"
 def ts_3():
-    global t_score, as_name
+    global t_score, as_name, absolute_folder_path_2
+    absolute_folder_path_2 = os.path.abspath(final_file)
     #sorts both lists at the same time
     t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
     def csv_file():
@@ -180,7 +192,7 @@ def ts_3():
                         writer.writerow([as_name[i], t_score[i]])
             except OSError:
                 continue
-    files_button = ctk.CTkButton(win, text='Sort Data And Display File', command=csv_file)
-    files_button.pack()
+    files_button = ctk.CTkButton(win, text='Sort Data And Display File', command=lambda : [csv_file(), display_file()])
+    files_button.pack(pady=8)
 
 win.mainloop()
