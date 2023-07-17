@@ -192,6 +192,7 @@ def ts_3():
                         writer.writerow([as_name[i], t_score[i]])
             except OSError:
                 continue
+        files_button.destroy()
     files_button = ctk.CTkButton(win, text='Sort Data And Display File', command=lambda : [csv_file(), display_file()])
     files_button.pack(pady=8)
 
