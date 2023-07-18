@@ -9,7 +9,7 @@ This program reads results for Waka Ama and displays them after some calculation
 
 These steps should result in having a desktop shortcut, skipping the need to go into the files again.
 
-# instructions for use:
+# Instructions For Use:
 1. when the program is running, select the first button you see.
 2. select the necessary folder. once selected, the program will automatically move to the next step.
 3. enter the year you want the data to be from, then select the button.
@@ -17,3 +17,10 @@ These steps should result in having a desktop shortcut, skipping the need to go 
 5. select the sort data and display file button.
 6. copy the resulting file path and put it into the command prompt.
 7. At this point you can close the program.
+
+# Intended Platform and Setup
+If you dont want to use the exe file, you will need to download the following modules:
+os
+csv
+tkinter
+customtkinter
