@@ -11,12 +11,11 @@ These steps should result in having a desktop shortcut, skipping the need to go 
 
 # Instructions For Use:
 1. when the program is running, select the first button you see.
-2. select the necessary folder. once selected, the program will automatically move to the next step.
-3. enter the year you want the data to be from, then select the button.
-4. select the read files button.
-5. select the sort data and display file button.
-6. copy the resulting file path and put it into the command prompt.
-7. At this point you can close the program.
+2. select the necessary folder and press the select folder button to close the file directory.
+3. enter the year you want the data to be from. This entry will be located below the button from step 1.
+4. select the generate output file button.
+5. copy the resulting file path and open the file using your preferred method.
+6. At this point you can close the program or you can change the year and run it again.
 
 # Intended Platform and Setup
 If you dont want to use the exe file, you will need to download the following modules:
