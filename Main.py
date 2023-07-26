@@ -39,23 +39,26 @@ class window(ctk.CTk):
         #error handling
         def error_handling():
             global as_name, t_score
-            keyword_2 = self.entry.get()
-            if len(keyword_2) != 0:
-                try:
-                    int(keyword_2)
-                except ValueError:
-                    errors()
-                #uses function. the name explains it.
-                Select_files_with_finals(folder_path, keyword, keyword_2)
-                if len(selected_files) == 0:
-                    errors()
-                else:
-                    #uses another function and then regulates the output
-                    read_files()
-                    self.output.delete(0, END)
-                    self.output.insert(0, absolute_folder_path_2)
-                    as_name = []
-                    t_score = []
+            try:
+                keyword_2 = self.entry.get()
+                if len(keyword_2) != 0:
+                    int(keyword_2)                  
+                    #uses function. the name explains it.
+                    Select_files_with_finals(folder_path, keyword, keyword_2)
+                    if len(selected_files) == 0:
+                        errors()
+                    else:
+                        #uses another function and then regulates the output
+                        read_files()
+                        self.output.delete(0, END)
+                        self.output.insert(0, absolute_folder_path_2)
+                        as_name = []
+                        t_score = []
+            except (OSError, csv.Error):
+                print('error')
+            except ValueError:
+                errors()
+                    
         #buttton letting user use the error handling. that is not the main purpose of the function though
         self.button_2 = ctk.CTkButton(self, text='Generate Output File', command=lambda: [error_handling()])
         self.button_2.pack(pady=20)
@@ -143,17 +146,12 @@ def write_file():
     absolute_folder_path_2 = os.path.abspath(final_file)
     #sorts both lists at the same time
     t_score, as_name = zip(*sorted(zip(t_score, as_name), reverse=True))
-    encodings = ["utf-16"]
-    for encoding in encodings:
-        #puts lists into a csv file
-        try:
-            with open("results.csv", "w", newline="", encoding=encoding) as file:
-                writer = csv.writer(file)
-                writer.writerow(["Association Name", "Total Score"])
-                for i in range(len(as_name)):
-                    writer.writerow([as_name[i], t_score[i]])
-        except OSError:
-            continue
+    #puts lists into a csv file
+    with open("results.csv", "w", newline="", encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Association Name", "Total Score"])
+        for i in range(len(as_name)):
+            writer.writerow([as_name[i], t_score[i]])
 #main loop
 win = window()
 win.mainloop()
