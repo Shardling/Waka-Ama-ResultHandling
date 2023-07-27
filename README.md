@@ -7,6 +7,9 @@ This program reads results for Waka Ama and displays them after some calculation
 3. Once the file is unzipped, click on the executable, right click, and the select "create shortcut".
 4. once a shortcut has been created, it will be stored in the folder so you will need to drag it to your desktop.
 
+   Or:
+Instead of a folder, you may download a file. in this case, just move it to your desktop from your downloads.
+
 These steps should result in having a desktop shortcut, skipping the need to go into the files again.
 
 # Instructions For Use:
