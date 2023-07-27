@@ -4,6 +4,7 @@ import csv
 from tkinter import *
 import customtkinter as ctk
 from tkinter import filedialog
+import subprocess
 ctk.set_appearance_mode("Dark")
 #defining variables
 as_name = []
@@ -54,6 +55,8 @@ class window(ctk.CTk):
                         self.output.insert(0, absolute_folder_path_2)
                         if os.name == 'nt':  # For Windows
                             os.startfile(final_file)
+                        elif os.name == 'posix':  # For macOS and Linux
+                            subprocess.Popen(["notepad.exe", final_file])
                         as_name = []
                         t_score = []
             except (OSError, csv.Error):
