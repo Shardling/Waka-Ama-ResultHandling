@@ -52,6 +52,8 @@ class window(ctk.CTk):
                         read_files()
                         self.output.delete(0, END)
                         self.output.insert(0, absolute_folder_path_2)
+                        if os.name == 'nt':  # For Windows
+                            os.startfile(final_file)
                         as_name = []
                         t_score = []
             except (OSError, csv.Error):
