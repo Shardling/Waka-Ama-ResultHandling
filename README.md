@@ -2,7 +2,7 @@
 This program reads results for Waka Ama and displays them after some calculations
 
 # Instructions for installation:
-1. Open the latest release and download the executable file
+1. Open the latest release and download the executable file*.
 2. Unzip the file. This should be prompted if try run the executable in the zipped file.
 3. Once the file is unzipped, click on the executable, right click, and the select "create shortcut".
 4. once a shortcut has been created, it will be stored in the folder so you will need to drag it to your desktop.
@@ -26,3 +26,6 @@ os
 csv
 tkinter
 customtkinter
+
+
+*Only for Windows
