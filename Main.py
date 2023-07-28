@@ -56,7 +56,7 @@ class window(ctk.CTk):
                         if os.name == 'nt':  # For Windows
                             os.startfile(final_file)
                         elif os.name == 'posix':  # For macOS and Linux
-                            subprocess.Popen(["notepad.exe", final_file])
+                            subprocess.Popen(["open", final_file])
                         as_name = []
                         t_score = []
             except (OSError, csv.Error):
