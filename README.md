@@ -22,10 +22,11 @@ These steps should result in having a desktop shortcut, skipping the need to go 
 
 # Intended Platform and Setup
 If you dont want to use the exe file, you will need to download the following modules:
-os
-csv
-tkinter
-customtkinter
+os, 
+csv, 
+tkinter, 
+customtkinter, 
+subprocess
 
 
 *Only for Windows
