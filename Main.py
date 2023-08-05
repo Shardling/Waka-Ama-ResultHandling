@@ -81,11 +81,11 @@ def Select_files_with_finals(folder_path: str, keyword: str, keyword_2: str) -> 
                 folder_name = os.path.dirname(file_path)
                 for root, dirs, files in os.walk(folder_name):
                     #if it is in the folder name, append to selected_files
-                    if keyword_2 in folder_name:
-                        selected_files.append(file_path)
-                    #else open window saying something is wrong
-                    else:
-                        break
+                    if len(keyword_2) == 4:
+                        if keyword_2 in folder_name:
+                            selected_files.append(file_path)
+                        else:
+                            break
 def read_files():
     count = 0
     count_2 = 0
